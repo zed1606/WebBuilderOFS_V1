@@ -1,9 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styled, { css } from 'styled-components'; // Import css
+import styled from 'styled-components';
 import { useEditorStore } from '../../store/editorStore';
 import ComponentRenderer from './ComponentRenderer';
-import { DragItem, ItemTypes, ComponentType, DeviceType, DeviceWidths } from '../../types/editor';
+import {
+  DragItem,
+  ItemTypes,
+  ComponentType,
+  DeviceType,
+  DeviceWidths,
+} from '../../types/editor';
 import { useDrop } from 'react-dnd';
 import ComponentPaletteItem from './ComponentPaletteItem';
 import PageSettingsPanel from './PageSettingsPanel'; // Import PageSettingsPanel
@@ -70,7 +76,6 @@ const DeviceButton = styled.button<DeviceButtonProps>`
   }
 `;
 
-
 const HeaderActions = styled.div`
   /* Styles for actions container if needed */
 `;
@@ -87,7 +92,6 @@ const PreviewButton = styled(Link)`
     background-color: #0056b3;
   }
 `;
-
 
 const MainContent = styled.div`
   display: flex;
@@ -132,7 +136,6 @@ const CanvasFrame = styled.div<CanvasFrameProps>`
   transition: width 0.3s ease-in-out;
 `;
 
-
 const CanvasDropZone = styled.div`
   min-height: 100%;
   width: 100%;
@@ -140,7 +143,6 @@ const CanvasDropZone = styled.div`
     background-color: #f0f8ff;
   }
 `;
-
 
 const PropertiesPanel = styled.aside`
   width: 300px;
@@ -151,20 +153,19 @@ const PropertiesPanel = styled.aside`
 `;
 
 const EditorLayout: React.FC = () => {
-  const { components, addComponent, currentDevice, setCurrentDevice } = useEditorStore(
-    (state) => ({
+  const { components, addComponent, currentDevice, setCurrentDevice } =
+    useEditorStore((state) => ({
       components: state.components,
       addComponent: state.addComponent,
       currentDevice: state.currentDevice,
       setCurrentDevice: state.setCurrentDevice,
-    })
-  );
+    }));
 
   const [{ isOver, canDrop }, dropRef] = useDrop(
     () => ({
       accept: ItemTypes.EDITOR_COMPONENT,
       drop: (item: DragItem, monitor) => {
-        if (monitor.didDrop() && monitor.getTargetIds().length > 0) {
+        if (monitor.didDrop()) {
           return;
         }
         if (item.isNew) {
@@ -176,9 +177,8 @@ const EditorLayout: React.FC = () => {
         canDrop: !!monitor.canDrop(),
       }),
     }),
-    [addComponent]
+    [addComponent],
   );
-
 
   return (
     <EditorContainer>
@@ -189,27 +189,31 @@ const EditorLayout: React.FC = () => {
             <DeviceButton
               onClick={() => setCurrentDevice(DeviceType.Desktop)}
               isActive={currentDevice === DeviceType.Desktop}
-              title="Desktop View"
+              title='Desktop View'
             >
               <DesktopIcon /> Desktop
             </DeviceButton>
             <DeviceButton
               onClick={() => setCurrentDevice(DeviceType.Tablet)}
               isActive={currentDevice === DeviceType.Tablet}
-              title="Tablet View"
+              title='Tablet View'
             >
               <TabletIcon /> Tablet
             </DeviceButton>
             <DeviceButton
               onClick={() => setCurrentDevice(DeviceType.Mobile)}
               isActive={currentDevice === DeviceType.Mobile}
-              title="Mobile View"
+              title='Mobile View'
             >
               <MobileIcon /> Mobile
             </DeviceButton>
           </DeviceSwitcher>
           <HeaderActions>
-            <PreviewButton to="/preview" target="_blank" rel="noopener noreferrer">
+            <PreviewButton
+              to='/preview'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
               Preview
             </PreviewButton>
           </HeaderActions>
@@ -218,17 +222,29 @@ const EditorLayout: React.FC = () => {
       <MainContent>
         <Sidebar>
           <h4>Components</h4>
-          <ComponentPaletteItem type={ComponentType.Section} label="Section" />
-          <ComponentPaletteItem type={ComponentType.Container} label="Container" />
-          <ComponentPaletteItem type={ComponentType.Grid} label="Grid" />
-          <ComponentPaletteItem type={ComponentType.TextBlock} label="Text Block" />
-          <ComponentPaletteItem type={ComponentType.Image} label="Image" />
+          <ComponentPaletteItem type={ComponentType.Section} label='Section' />
+          <ComponentPaletteItem
+            type={ComponentType.Container}
+            label='Container'
+          />
+          <ComponentPaletteItem type={ComponentType.Grid} label='Grid' />
+          <ComponentPaletteItem
+            type={ComponentType.TextBlock}
+            label='Text Block'
+          />
+          <ComponentPaletteItem type={ComponentType.Image} label='Image' />
         </Sidebar>
         <CanvasArea>
           {/* The CanvasFrame simulates the device screen */}
           <CanvasFrame width={DeviceWidths[currentDevice]}>
-            <CanvasDropZone ref={dropRef} className={isOver && canDrop ? 'is-over' : ''}>
-              {components.length === 0 && <p>Drop components here to start building.</p>}
+            <CanvasDropZone
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ref={dropRef as any}
+              className={isOver && canDrop ? 'is-over' : ''}
+            >
+              {components.length === 0 && (
+                <p>Drop components here to start building.</p>
+              )}
               {components.map((component) => (
                 <ComponentRenderer key={component.id} component={component} />
               ))}
@@ -238,7 +254,14 @@ const EditorLayout: React.FC = () => {
         <PropertiesPanel>
           <PageSettingsPanel />
           {/* Other property editing UI will go here, e.g., for selected components */}
-          <div style={{ padding: '10px', textAlign: 'center', color: '#777', marginTop: '20px' }}>
+          <div
+            style={{
+              padding: '10px',
+              textAlign: 'center',
+              color: '#777',
+              marginTop: '20px',
+            }}
+          >
             Select a component to edit its properties.
           </div>
         </PropertiesPanel>

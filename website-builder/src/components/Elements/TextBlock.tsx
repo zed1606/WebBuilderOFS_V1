@@ -18,7 +18,12 @@ const StyledText = styled.p<StyledTextProps>`
   word-break: break-word; /* Prevent long text from overflowing */
 `;
 
-const TextBlock: React.FC<TextBlockProps> = ({ text, fontSize, color, textAlign }) => {
+const TextBlock: React.FC<TextBlockProps> = ({
+  text,
+  fontSize,
+  color,
+  textAlign,
+}) => {
   return (
     <StyledText fontSize={fontSize} color={color} textAlign={textAlign}>
       {text || 'Default Text Block'}

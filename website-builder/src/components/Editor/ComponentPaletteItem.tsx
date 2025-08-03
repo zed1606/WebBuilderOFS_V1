@@ -12,7 +12,7 @@ const PaletteItemContainer = styled.div`
   cursor: grab;
   font-size: 0.9rem;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &:hover {
     background-color: #f0f0f0;
@@ -29,7 +29,10 @@ interface ComponentPaletteItemProps {
   label: string;
 }
 
-const ComponentPaletteItem: React.FC<ComponentPaletteItemProps> = ({ type, label }) => {
+const ComponentPaletteItem: React.FC<ComponentPaletteItemProps> = ({
+  type,
+  label,
+}) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.EDITOR_COMPONENT, // This is what drop targets will accept
     item: { type, isNew: true } as DragItem, // The data payload for the dragged item
@@ -39,7 +42,11 @@ const ComponentPaletteItem: React.FC<ComponentPaletteItemProps> = ({ type, label
   }));
 
   return (
-    <PaletteItemContainer ref={drag} className={isDragging ? 'is-dragging' : ''}>
+    <PaletteItemContainer
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ref={drag as any}
+      className={isDragging ? 'is-dragging' : ''}
+    >
       {label}
     </PaletteItemContainer>
   );

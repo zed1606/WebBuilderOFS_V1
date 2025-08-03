@@ -20,8 +20,15 @@ const StyledContainer = styled.div<ContainerProps>`
   flex-direction: column; /* Default stacking for children */
 `;
 
-const Container: React.FC<PropsWithChildren<ContainerProps>> = ({ children, ...props }) => {
-  return <StyledContainer {...props}>{children || 'Container: Drop content here'}</StyledContainer>;
+const Container: React.FC<PropsWithChildren<ContainerProps>> = ({
+  children,
+  ...props
+}) => {
+  return (
+    <StyledContainer {...props}>
+      {children || 'Container: Drop content here'}
+    </StyledContainer>
+  );
 };
 
 export default Container;

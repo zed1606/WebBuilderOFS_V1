@@ -26,13 +26,19 @@ const PreviewPage: React.FC = () => {
 
   return (
     <>
-      <GlobalStyle /> {/* Ensure global styles are applied in the preview context */}
+      <GlobalStyle />{' '}
+      {/* Ensure global styles are applied in the preview context */}
       <PreviewContainer>
         {components.map((component) => (
-          <ComponentRenderer key={`preview-${component.id}`} component={component} />
+          <ComponentRenderer
+            key={`preview-${component.id}`}
+            component={component}
+          />
         ))}
         {components.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '50px', fontSize: '1.2em' }}>
+          <div
+            style={{ textAlign: 'center', padding: '50px', fontSize: '1.2em' }}
+          >
             The canvas is empty. Add components in the editor to see them here.
           </div>
         )}

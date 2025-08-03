@@ -19,8 +19,15 @@ const StyledSection = styled.section<SectionProps>`
   align-items: center; /* Center content by default, can be overridden by children */
 `;
 
-const Section: React.FC<PropsWithChildren<SectionProps>> = ({ children, ...props }) => {
-  return <StyledSection {...props}>{children || 'Section: Drop content here'}</StyledSection>;
+const Section: React.FC<PropsWithChildren<SectionProps>> = ({
+  children,
+  ...props
+}) => {
+  return (
+    <StyledSection {...props}>
+      {children || 'Section: Drop content here'}
+    </StyledSection>
+  );
 };
 
 export default Section;

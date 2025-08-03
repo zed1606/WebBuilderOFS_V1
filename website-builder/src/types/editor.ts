@@ -10,7 +10,7 @@ export enum ComponentType {
 
 // Base interface for all component props
 export interface BaseComponentProps {
-  [key: string]: any; // Allows for arbitrary props
+  [key: string]: unknown; // Allows for arbitrary props
 }
 
 // Specific props for a TextBlock

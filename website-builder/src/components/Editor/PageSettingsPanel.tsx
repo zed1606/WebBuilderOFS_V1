@@ -59,35 +59,34 @@ const Textarea = styled.textarea`
 `;
 
 const PageSettingsPanel: React.FC = () => {
-  const { pageTitle, pageDescription, setPageTitle, setPageDescription } = useEditorStore(
-    (state) => ({
+  const { pageTitle, pageDescription, setPageTitle, setPageDescription } =
+    useEditorStore((state) => ({
       pageTitle: state.pageTitle,
       pageDescription: state.pageDescription,
       setPageTitle: state.setPageTitle,
       setPageDescription: state.setPageDescription,
-    })
-  );
+    }));
 
   return (
     <SettingsContainer>
       <Title>Page SEO Settings</Title>
       <FormGroup>
-        <Label htmlFor="pageTitle">Page Title</Label>
+        <Label htmlFor='pageTitle'>Page Title</Label>
         <Input
-          id="pageTitle"
-          type="text"
+          id='pageTitle'
+          type='text'
           value={pageTitle}
           onChange={(e) => setPageTitle(e.target.value)}
-          placeholder="Enter page title"
+          placeholder='Enter page title'
         />
       </FormGroup>
       <FormGroup>
-        <Label htmlFor="pageDescription">Meta Description</Label>
+        <Label htmlFor='pageDescription'>Meta Description</Label>
         <Textarea
-          id="pageDescription"
+          id='pageDescription'
           value={pageDescription}
           onChange={(e) => setPageDescription(e.target.value)}
-          placeholder="Enter meta description (max 160 characters recommended)"
+          placeholder='Enter meta description (max 160 characters recommended)'
           rows={4}
         />
       </FormGroup>

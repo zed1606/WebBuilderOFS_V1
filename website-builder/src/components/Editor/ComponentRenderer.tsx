@@ -1,5 +1,10 @@
 import React from 'react';
-import { EditorComponent, ComponentType, TextBlockProps, ImageProps } from '../../types/editor';
+import {
+  EditorComponent,
+  ComponentType,
+  TextBlockProps,
+  ImageProps,
+} from '../../types/editor';
 
 // Import the actual components
 import TextBlock from '../Elements/TextBlock';
@@ -40,16 +45,26 @@ const ComponentRenderer: React.FC<ComponentRendererProps> = ({ component }) => {
     case ComponentType.Image:
       return <ImageComponent {...(component.props as ImageProps)} />;
     case ComponentType.Section:
-      return <Section {...(component.props as SectionProps)}>{renderChildren()}</Section>;
+      return (
+        <Section {...(component.props as SectionProps)}>
+          {renderChildren()}
+        </Section>
+      );
     case ComponentType.Container:
-      return <Container {...(component.props as ContainerProps)}>{renderChildren()}</Container>;
+      return (
+        <Container {...(component.props as ContainerProps)}>
+          {renderChildren()}
+        </Container>
+      );
     case ComponentType.Grid:
       // Grid children rendering is a bit special.
       // If explicit children are defined in component.children, they are cells.
       // If not, the Grid component itself might render placeholder columns.
       // For now, this assumes children are EditorComponent instances meant to be rendered inside grid cells.
       // This will need refinement when we implement how children are added to grids.
-      return <Grid {...(component.props as GridProps)}>{renderChildren()}</Grid>;
+      return (
+        <Grid {...(component.props as GridProps)}>{renderChildren()}</Grid>
+      );
     default:
       console.warn('Unknown component type:', component.type);
       return <div>Unknown component type: {component.type}</div>;

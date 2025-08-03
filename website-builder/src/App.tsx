@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import EditorLayout from './components/Editor/EditorLayout';
 import PreviewPage from './pages/PreviewPage';
 import { DndProvider } from 'react-dnd';
@@ -17,8 +17,8 @@ function App() {
           <Link to="/preview" target="_blank" rel="noopener noreferrer">Preview (New Tab)</Link>
         </nav> */}
         <Routes>
-          <Route path="/" element={<EditorLayout />} />
-          <Route path="/preview" element={<PreviewPage />} />
+          <Route path='/' element={<EditorLayout />} />
+          <Route path='/preview' element={<PreviewPage />} />
         </Routes>
       </Router>
     </DndProvider>

@@ -7,17 +7,18 @@ import {
   TextBlockProps,
   ImageProps,
   BaseComponentProps, // Added for updateComponentProps
-  DeviceType,         // Added for responsive state
+  DeviceType, // Added for responsive state
 } from '../types/editor';
 import { SectionProps } from '../components/Elements/Section';
 import { ContainerProps } from '../components/Elements/Container';
 import { GridProps } from '../components/Elements/Grid';
 
 // Helper to generate unique IDs
-const generateId = () => Date.now().toString() + Math.random().toString(36).substring(2, 9);
+const generateId = () =>
+  Date.now().toString() + Math.random().toString(36).substring(2, 9);
 
 // Helper to create default props for new components
-const getDefaultProps = (type: ComponentType): any => {
+const getDefaultProps = (type: ComponentType): BaseComponentProps => {
   switch (type) {
     case ComponentType.TextBlock:
       return {
@@ -56,16 +57,26 @@ const getDefaultProps = (type: ComponentType): any => {
   }
 };
 
-
 interface EditorState {
   components: EditorComponent[];
   selectedComponentId: string | null;
   currentDevice: DeviceType; // New state for current device view
   pageTitle: string; // New state for SEO page title
   pageDescription: string; // New state for SEO meta description
-  addComponent: (item: DragItem, parentId: string | null, index?: number) => void;
-  moveComponent: (draggedId: string, targetId: string | null, newIndex?: number) => void;
-  updateComponentProps: (componentId: string, props: Partial<BaseComponentProps>) => void;
+  addComponent: (
+    item: DragItem,
+    parentId: string | null,
+    index?: number,
+  ) => void;
+  moveComponent: (
+    draggedId: string,
+    targetId: string | null,
+    newIndex?: number,
+  ) => void;
+  updateComponentProps: (
+    componentId: string,
+    props: Partial<BaseComponentProps>,
+  ) => void;
   selectComponent: (componentId: string | null) => void;
   setCurrentDevice: (device: DeviceType) => void; // Action to change device
   setPageTitle: (title: string) => void; // Action to set page title
@@ -78,16 +89,21 @@ const addComponentRecursive = (
   components: EditorComponent[],
   newComponent: EditorComponent,
   parentId: string | null,
-  index?: number
+  index?: number,
 ): EditorComponent[] => {
-  if (parentId === null) { // Add to root
+  if (parentId === null) {
+    // Add to root
     if (index !== undefined) {
-      return [...components.slice(0, index), newComponent, ...components.slice(index)];
+      return [
+        ...components.slice(0, index),
+        newComponent,
+        ...components.slice(index),
+      ];
     }
     return [...components, newComponent];
   }
 
-  return components.map(comp => {
+  return components.map((comp) => {
     if (comp.id === parentId) {
       const newChildren = comp.children ? [...comp.children] : [];
       if (index !== undefined) {
@@ -98,7 +114,15 @@ const addComponentRecursive = (
       return { ...comp, children: newChildren };
     }
     if (comp.children) {
-      return { ...comp, children: addComponentRecursive(comp.children, newComponent, parentId, index) };
+      return {
+        ...comp,
+        children: addComponentRecursive(
+          comp.children,
+          newComponent,
+          parentId,
+          index,
+        ),
+      };
     }
     return comp;
   });
@@ -108,64 +132,66 @@ const addComponentRecursive = (
 const updatePropsRecursive = (
   components: EditorComponent[],
   componentId: string,
-  propsToUpdate: Partial<BaseComponentProps>
+  propsToUpdate: Partial<BaseComponentProps>,
 ): EditorComponent[] => {
-  return components.map(comp => {
+  return components.map((comp) => {
     if (comp.id === componentId) {
       return { ...comp, props: { ...comp.props, ...propsToUpdate } };
     }
     if (comp.children) {
-      return { ...comp, children: updatePropsRecursive(comp.children, componentId, propsToUpdate) };
+      return {
+        ...comp,
+        children: updatePropsRecursive(
+          comp.children,
+          componentId,
+          propsToUpdate,
+        ),
+      };
     }
     return comp;
   });
 };
 
-
 export const useEditorStore = create<EditorState>()(
   devtools(
     (set) => ({
-      components: [
-        // Initial example component
-        {
-          id: generateId(),
-          type: ComponentType.Section,
-          props: getDefaultProps(ComponentType.Section) as SectionProps,
-          parentId: null,
-          children: [
-            {
-              id: generateId(),
-              type: ComponentType.Container,
-              props: getDefaultProps(ComponentType.Container) as ContainerProps,
-              parentId: 'initialSection', // This should be the ID of the parent section
-              children: [
-                {
-                  id: generateId(),
-                  type: ComponentType.TextBlock,
-                  props: { text: 'Welcome to the Editor!', fontSize: '24px', color: '#333', textAlign: 'center' } as TextBlockProps,
-                  parentId: 'initialContainer', // This should be the ID of the parent container
-                }
-              ]
-            }
-          ]
-        }
-      ].map(section => { // Post-process to fix parent IDs for initial data
-        const sectionId = section.id;
-        if (section.children) {
-          section.children = section.children.map(container => {
-            container.parentId = sectionId;
-            const containerId = container.id;
-            if (container.children) {
-              container.children = container.children.map(el => {
-                el.parentId = containerId;
-                return el;
-              });
-            }
-            return container;
-          });
-        }
-        return section;
-      }),
+      components: (() => {
+        const sectionId = generateId();
+        const containerId = generateId();
+        const textId = generateId();
+
+        return [
+          {
+            id: sectionId,
+            type: ComponentType.Section,
+            props: getDefaultProps(ComponentType.Section) as SectionProps,
+            parentId: null,
+            children: [
+              {
+                id: containerId,
+                type: ComponentType.Container,
+                props: getDefaultProps(
+                  ComponentType.Container,
+                ) as ContainerProps,
+                parentId: sectionId,
+                children: [
+                  {
+                    id: textId,
+                    type: ComponentType.TextBlock,
+                    props: {
+                      text: 'Welcome to the Editor!',
+                      fontSize: '24px',
+                      color: '#333',
+                      textAlign: 'center',
+                    } as TextBlockProps,
+                    parentId: containerId,
+                  },
+                ],
+              },
+            ],
+          },
+        ];
+      })(),
       selectedComponentId: null,
       currentDevice: DeviceType.Desktop, // Default to Desktop view
       pageTitle: 'My Awesome Page', // Default SEO title
@@ -178,9 +204,21 @@ export const useEditorStore = create<EditorState>()(
             type: item.type,
             props: getDefaultProps(item.type),
             parentId,
-            children: (item.type === ComponentType.Section || item.type === ComponentType.Container || item.type === ComponentType.Grid) ? [] : undefined,
+            children:
+              item.type === ComponentType.Section ||
+              item.type === ComponentType.Container ||
+              item.type === ComponentType.Grid
+                ? []
+                : undefined,
           };
-          return { components: addComponentRecursive(state.components, newComponent, parentId, index) };
+          return {
+            components: addComponentRecursive(
+              state.components,
+              newComponent,
+              parentId,
+              index,
+            ),
+          };
         }),
 
       moveComponent: (draggedId, targetParentId, newIndex) => {
@@ -193,7 +231,10 @@ export const useEditorStore = create<EditorState>()(
           let componentToMove: EditorComponent | undefined;
 
           // Function to recursively find and remove
-          const findAndRemove = (comps: EditorComponent[], id: string): EditorComponent[] => {
+          const findAndRemove = (
+            comps: EditorComponent[],
+            id: string,
+          ): EditorComponent[] => {
             return comps.reduce((acc, comp) => {
               if (comp.id === id) {
                 componentToMove = comp;
@@ -202,7 +243,7 @@ export const useEditorStore = create<EditorState>()(
               if (comp.children) {
                 const updatedChildren = findAndRemove(comp.children, id);
                 if (updatedChildren.length !== comp.children.length) {
-                   // If a child was removed, update this component's children
+                  // If a child was removed, update this component's children
                   acc.push({ ...comp, children: updatedChildren });
                 } else {
                   acc.push(comp);
@@ -218,7 +259,12 @@ export const useEditorStore = create<EditorState>()(
 
           if (componentToMove) {
             componentToMove.parentId = targetParentId; // Update parentId
-            updatedComponents = addComponentRecursive(updatedComponents, componentToMove, targetParentId, newIndex);
+            updatedComponents = addComponentRecursive(
+              updatedComponents,
+              componentToMove,
+              targetParentId,
+              newIndex,
+            );
           }
 
           return { components: updatedComponents };
@@ -227,17 +273,23 @@ export const useEditorStore = create<EditorState>()(
 
       updateComponentProps: (componentId, props) =>
         set((state) => ({
-          components: updatePropsRecursive(state.components, componentId, props),
+          components: updatePropsRecursive(
+            state.components,
+            componentId,
+            props,
+          ),
         })),
 
-      selectComponent: (componentId) => set({ selectedComponentId: componentId }),
+      selectComponent: (componentId) =>
+        set({ selectedComponentId: componentId }),
 
       setCurrentDevice: (device) => set({ currentDevice: device }),
 
       setPageTitle: (title) => set({ pageTitle: title }),
 
-      setPageDescription: (description) => set({ pageDescription: description }),
+      setPageDescription: (description) =>
+        set({ pageDescription: description }),
     }),
-    { name: 'EditorStore' }
-  )
+    { name: 'EditorStore' },
+  ),
 );

@@ -30,7 +30,10 @@ const StyledGrid = styled.div<GridProps>`
 // We might need a GridItem component later if we want to control individual cell properties
 // For now, direct children of Grid will act as cells.
 
-const Grid: React.FC<PropsWithChildren<GridProps>> = ({ children, ...props }) => {
+const Grid: React.FC<PropsWithChildren<GridProps>> = ({
+  children,
+  ...props
+}) => {
   // If no children, and columns are defined, we can render placeholder columns
   const renderContent = () => {
     if (children) return children;
